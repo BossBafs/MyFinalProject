@@ -1,79 +1,31 @@
-﻿using DataAccess.Abstract;
+﻿using Core.DataAccess.EntityFramework;
+using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace DataAccess.Concrete.EntityFramework
 {
     // NuGet Harici paketlerin yönetimini sağlar. ".Net" de EntityFramework kullanmak gibi
-    public class EFProductDal : IProductDal
+    public class EFProductDal : EfEntityRepositoryBase<Product, NorthwindContext>, IProductDal
     {
-        public void Add(Product entity)
-        {
-            // Bir class newlendiğinde o bellekten garbage collector belli zamanda düzenli gelir ve onu bellekten atar.
-            // Using içine yazılan nesneler using bitince anında garbage collectora gelir ve bellekten atılır.
-
-            // IDisposable pattern imlementation of C#
-            using (NorthwindContext context = new NorthwindContext())
-            {
-                var addedEntity = context.Entry(entity);    // Referansı yakalamak
-                addedEntity.State = EntityState.Added;      // Eklenecek nesne
-
-                // Üsttekilerin yerine şu yazılabilir.
-                //context.Products.Add(entity);
-
-                context.SaveChanges();                      // Ekle
-            }
-
-        }
-
-        public void Delete(Product entity)
+        // EfEntityRepositoryBase de IProductDal da ki operasyonlar ve imzalar olduğu için EfEntityRepositoryBase kullanılarak sorun çözülür.
+        public List<ProductDetailDto> GetProductDetails()
         {
             using (NorthwindContext context = new NorthwindContext())
             {
-                var deletedEntity = context.Entry(entity);
-                deletedEntity.State = EntityState.Deleted;
-
-                //context.Products.Remove(context.Products.SingleOrDefault(p=> p.ProductId == entity.ProductId));
-
-                context.SaveChanges();
-            }
-        }
-
-        public void Update(Product entity)
-        {
-            using (NorthwindContext context = new NorthwindContext())
-            {
-                var updatedEntity = context.Entry(entity);
-                updatedEntity.State = EntityState.Modified;
-
-                //var productToUpdate = context.Products.SingleOrDefault(p => p.ProductId == entity.ProductId);
-                //productToUpdate.ProductName = entity.ProductName;
-                //productToUpdate.ProductId = entity.ProductId;
-                //productToUpdate.CategoryId = entity.CategoryId;
-                //productToUpdate.UnitPrice = entity.UnitPrice;
-                //productToUpdate.UnitsInStock = entity.UnitsInStock;
-
-                context.SaveChanges();
-            }
-        }
-
-
-        public List<Product> GetAll(Expression<Func<Product, bool>> filter = null)
-        {
-            using (NorthwindContext context = new NorthwindContext())
-            {
-                return filter == null                                 // Filtre boş mu 
-                    ? context.Set<Product>().ToList()                   // Filtre yok ise 
-                    : context.Set<Product>().Where(filter).ToList();      // Filtre var ise filtreler
-            }
-        }
-
-        public Product Get(Expression<Func<Product, bool>> filter)
-        {
-            using (NorthwindContext context = new NorthwindContext())
-            {
-                return context.Set<Product>().SingleOrDefault(filter);
+                var result = from p in context.Products
+                             join c in context.Categories
+                             on p.CategoryId equals c.CategoryId
+                             select new ProductDetailDto
+                             {
+                                 ProductId = p.ProductId,
+                                 ProductName = p.ProductName,
+                                 CategoryName = c.CategoryName,
+                                 UnitsInStock = p.UnitsInStock
+                             };
+                return result.ToList();
             }
         }
     }

@@ -1,7 +1,7 @@
-﻿using Entities.Abstract;
+﻿using Core.Entities;
 using System.Linq.Expressions;
 
-namespace DataAccess.Abstract
+namespace Core.DataAccess
 {
     // Burada artık değişken türünü classlara teker teker vermek yerine tek bir kısıma T tipi vererek tüm classlarda çağırmayı sağlıyoruz.
     // generic constraint : genel kısıtlama >> Burada T tipine kısıtlama getiriyoruz.
@@ -13,7 +13,7 @@ namespace DataAccess.Abstract
         List<T> GetAll(Expression<Func<T,bool>> filter=null);   // Burada filtre boş olabileceği için null yazdık.
         T Get(Expression<Func<T, bool>> filter);    // Burada filtrelemek durumunda.
         void Add(T entity);
-        void Update(T entity);
+        void Update(T entity);      // void özel bir tip döndürmez. (List, string ...vb)
         void Delete(T entity);
 
 

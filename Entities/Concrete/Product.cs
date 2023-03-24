@@ -1,7 +1,10 @@
-﻿using Entities.Abstract;
+﻿
+
+using Core.Entities;
 
 namespace Entities.Concrete
 {
+    // Veri Tabanı tablosu olduğunu belirtmek için IEntity interfaceni verdik.
     public class Product : IEntity
     {
         public int ProductId { get; set; }
