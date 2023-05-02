@@ -11,7 +11,7 @@ namespace ConsoleUI
             //ProductTestInMemoryProductDal();
             //ProductTestEFProductDal();
 
-            //ProductTestGetProductDetails();
+            ProductTestGetProductDetails();
 
             //CategoryTest();
 
@@ -20,9 +20,17 @@ namespace ConsoleUI
         private static void ProductTestGetProductDetails()
         {
             ProductManager productManager = new ProductManager(new EFProductDal());
-            foreach (var product in productManager.GetProductDetails())
+            var result = productManager.GetProductDetails();
+            if (result.Success == true)
             {
-                Console.WriteLine(product.ProductName + "/" + product.CategoryName);
+                foreach (var product in result.Data)
+                {
+                    Console.WriteLine(product.ProductName + "/" + product.CategoryName);
+                }
+            }
+            else
+            {
+                Console.WriteLine(result.Message);
             }
         }
 
@@ -35,34 +43,34 @@ namespace ConsoleUI
             }
         }
 
-        private static void ProductTestInMemoryProductDal()
-        {
-            ProductManager productManager = new ProductManager(new InMemoryProductDal());
-            foreach (var product in productManager.GetAll())
-            {
-                Console.WriteLine(product.ProductName);
-            }
-        }
+        //private static void ProductTestInMemoryProductDal()
+        //{
+        //    ProductManager productManager = new ProductManager(new InMemoryProductDal());
+        //    foreach (var product in productManager.GetAll())
+        //    {
+        //        Console.WriteLine(product.ProductName);
+        //    }
+        //}
 
-        private static void ProductTestEFProductDal()
-        {
-            ProductManager productManager1 = new ProductManager(new EFProductDal());
-            foreach (var item in productManager1.GetByUnitPrice(40, 100))
-            {
-                Console.WriteLine(item.ProductName);
-            }
+        //private static void ProductTestEFProductDal()
+        //{
+        //    ProductManager productManager1 = new ProductManager(new EFProductDal());
+        //    foreach (var item in productManager1.GetByUnitPrice(40, 100))
+        //    {
+        //        Console.WriteLine(item.ProductName);
+        //    }
 
-            Console.WriteLine("---------    ---    ---      ---    ---   ---------");
+        //    Console.WriteLine("---------    ---    ---      ---    ---   ---------");
 
-            foreach (var item in productManager1.GetAllByCategoryId(2))
-            {
-                Console.WriteLine(item.ProductName);
-            }
+        //    foreach (var item in productManager1.GetAllByCategoryId(2))
+        //    {
+        //        Console.WriteLine(item.ProductName);
+        //    }
 
-            Console.WriteLine("---------    ---    ---      ---    ---   ---------");
+        //    Console.WriteLine("---------    ---    ---      ---    ---   ---------");
 
-            var product = productManager1.Get(1);
-            Console.WriteLine(product.ProductName);
-        }
+        //    var product = productManager1.Get(1);
+        //    Console.WriteLine(product.ProductName);
+        //}
     }
 }
