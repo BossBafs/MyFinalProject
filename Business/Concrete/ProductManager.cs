@@ -34,7 +34,7 @@ namespace Business.Concrete
             // İş kuralları buraya yazılır.
             // İş kurallarını geçtikten sonra GetAll ile bütün ürünleri verir.
 
-            if (DateTime.Now.Hour ==22)
+            if (DateTime.Now.Hour == 16)
             {
                 return new ErrorDataResult<List<Product>>(Messages.MaintenanceTime);
             }
