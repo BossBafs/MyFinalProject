@@ -26,7 +26,7 @@ namespace WebAPI.Controllers
             //IProductService productService = new ProductManager(new EFProductDal());
             // Bunu yapmak yerine Constructor Injection yapacağız.
             var result = _productService.GetAll();
-            if (result.Success)
+            if (result.Success) 
             {
                 return Ok(result);
             }
