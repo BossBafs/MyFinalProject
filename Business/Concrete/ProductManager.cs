@@ -1,9 +1,12 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
+using FluentValidation;
 using System.Xml.Linq;
 
 namespace Business.Concrete
@@ -17,14 +20,29 @@ namespace Business.Concrete
             // ProductManager newlendiğinde IProductDal referansını vermesi için bunu yapıyoruz.
             _productDal = productDal;
         }
-
+        
         public IResult Add(Product product)
         {
-            if (product.ProductName.Length < 2)
-            {
-                return new ErrorResult(Messages.ProductNameInvalid);
-                // else gerek yok. Return çalışırsa zaten orada bitecektir.
-            }
+            //if (product.UnitPrice <= 0)
+            //{
+            //    return new ErrorResult(Messages.UnitPriceInvalid);
+            //}
+            //if (product.ProductName.Length < 2)
+            //{
+            //    return new ErrorResult(Messages.ProductNameInvalid);
+            //    // else gerek yok. Return çalışırsa zaten orada bitecektir.
+            //}
+
+            //var context = new ValidationContext<Product>(product);
+            //ProductValidator productvalidator = new ProductValidator();
+            //var result = productvalidator.Validate(context);
+            //if (!result.IsValid)
+            //{
+            //    throw new ValidationException(result.Errors);
+            //}
+
+            ValidationTool.Validate(new ProductValidator(), product);
+
             _productDal.Add(product);
             return new SuccessResult(Messages.ProductAdded);
         }
@@ -34,7 +52,7 @@ namespace Business.Concrete
             // İş kuralları buraya yazılır.
             // İş kurallarını geçtikten sonra GetAll ile bütün ürünleri verir.
 
-            if (DateTime.Now.Hour == 16)
+            if (DateTime.Now.Hour == 05)
             {
                 return new ErrorDataResult<List<Product>>(Messages.MaintenanceTime);
             }
