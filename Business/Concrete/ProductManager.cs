@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -20,7 +21,9 @@ namespace Business.Concrete
             // ProductManager newlendiğinde IProductDal referansını vermesi için bunu yapıyoruz.
             _productDal = productDal;
         }
-        
+
+
+        [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
             //if (product.UnitPrice <= 0)
@@ -41,7 +44,8 @@ namespace Business.Concrete
             //    throw new ValidationException(result.Errors);
             //}
 
-            ValidationTool.Validate(new ProductValidator(), product);
+            //ValidationTool.Validate(new ProductValidator(), product);
+            //Bunu yazmak yerine ValidationAspect attribute kullandık.
 
             _productDal.Add(product);
             return new SuccessResult(Messages.ProductAdded);
