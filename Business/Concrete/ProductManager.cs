@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
@@ -8,7 +9,9 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using System.Xml.Linq;
+using ILogger = Business.CCS.ILogger;
 
 namespace Business.Concrete
 {
@@ -47,8 +50,30 @@ namespace Business.Concrete
             //ValidationTool.Validate(new ProductValidator(), product);
             //Bunu yazmak yerine ValidationAspect attribute kullandık.
 
+            //_logger.Log();
+            //try
+            //{
+            //    _productDal.Add(product);
+            //    return new SuccessResult(Messages.ProductAdded);
+            //}
+            //catch (Exception exception)
+            //{
+            //    _logger.Log();
+            ////}
+            //return new ErrorResult();
+            return CheckIfProductCountOfCategoryCorrect();
             _productDal.Add(product);
             return new SuccessResult(Messages.ProductAdded);
+        }
+
+        private IResult CheckIfProductCountOfCategoryCorrect()
+        {
+            var result = _productDal.GetAll(p => p.CategoryId == categoryId).Count;
+            if (result > 15)
+            {
+                return new ErrorResult(Messages.ProductCountOfCategoryError);
+            }
+            return new SuccessResult();
         }
 
         public IDataResult<List<Product>> GetAll()
@@ -86,6 +111,11 @@ namespace Business.Concrete
                 return new ErrorDataResult<List<ProductDetailDto>>(Messages.MaintenanceTime);
             }
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails());
+        }
+
+        public IResult Update(Product product)
+        {
+            throw new NotImplementedException();
         }
     }
 }

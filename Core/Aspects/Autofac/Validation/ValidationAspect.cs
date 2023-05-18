@@ -10,11 +10,15 @@ using System.Threading.Tasks;
 
 namespace Core.Aspects.Autofac.Validation
 {
+    // Aspect; bir methodun başında ve sonunda/hata verdiğinde çalışacak bir yapı.
+
     public class ValidationAspect : MethodInterception
     {
         private Type _validatorType;
         public ValidationAspect(Type validatorType)
         {
+            // Defensive coding 
+
             if (!typeof(IValidator).IsAssignableFrom(validatorType))
             {
                 throw new System.Exception("Bu bir doğrulama sınıfı değil.");
