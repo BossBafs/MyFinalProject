@@ -61,17 +61,34 @@ namespace Business.Concrete
             //    _logger.Log();
             ////}
             //return new ErrorResult();
-            return CheckIfProductCountOfCategoryCorrect();
-            _productDal.Add(product);
-            return new SuccessResult(Messages.ProductAdded);
+
+            if (CheckIfProductCountOfCategoryCorrect(product.CategoryId).Success)
+            {
+                if (CheckIfProductNameExists(product.ProductName).Success)
+                {
+                    _productDal.Add(product);
+                    return new SuccessResult(Messages.ProductAdded);
+                }
+            }
+            return new ErrorResult();
+            
         }
 
-        private IResult CheckIfProductCountOfCategoryCorrect()
+        private IResult CheckIfProductCountOfCategoryCorrect(int categoryId)
         {
             var result = _productDal.GetAll(p => p.CategoryId == categoryId).Count;
             if (result > 15)
             {
                 return new ErrorResult(Messages.ProductCountOfCategoryError);
+            }
+            return new SuccessResult();
+        }
+        private IResult CheckIfProductNameExists(string productName)
+        {
+            var result = _productDal.GetAll(p => p.ProductName == productName).Any();
+            if (result == true)
+            {
+                return new ErrorResult(Messages.ProductNameAlreadyExists);
             }
             return new SuccessResult();
         }
